@@ -23,7 +23,7 @@ These instructions will get you a copy of the project up and running on your loc
 1.  **Clone the repository:**
 
     ```sh
-    git clone https://github.com/your-username/build_tf_provider_docs.git
+    git clone https://github.com/alexeie/build_tf_provider_docs.git
     cd build_tf_provider_docs
     ```
 

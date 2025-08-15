@@ -1,5 +1,4 @@
 import json
-import os
 
 def create_url_list():
     with open('github_tree.json', 'r') as f:
