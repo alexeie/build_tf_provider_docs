@@ -1,0 +1,1 @@
+<a href="/Snowflake-Labs/terraform-provider-snowflake/main/https:/raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/docs/data-sources/account_roles.md">Moved Permanently</a>.

@@ -1,36 +1,48 @@
 #!/bin/bash
 
-# Initialize the markdown file with a main title
-echo "# Snowflake Terraform Provider Documentation" > snowflake_docs.md
-echo "" >> snowflake_docs.md
+# Get the version from CHANGELOG.md
+version=$(curl -s "https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/CHANGELOG.md" | grep -m 1 '## \[' | awk -F'[][]' '{print $2}')
+output_file="snowflake_${version}.md"
 
-# Separate sections for data sources and resources
-echo "## Data Sources" >> snowflake_docs.md
-echo "" >> snowflake_docs.md
+# Start with the main title
+echo "# Snowflake Terraform Provider Documentation v${version}" > "$output_file"
+echo "" >> "$output_file"
+echo "## All Resources" >> "$output_file"
+echo "## Table of Contents" >> "$output_file"
 
-# Process data source files first
-grep 'data-sources' urls.txt | while read -r url; do
-    # Extract filename, remove extension, and format as a title
-    filename=$(basename "$url")
-    title=$(echo "$filename" | sed 's/\.md$//' | sed 's/_/ /g' | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) substr($i,2)} 1')
+# Create a global TOC
+while IFS= read -r url; do
+    filename=$(basename "$url" .md)
+    resource_name="snowflake_${filename}"
+    anchor_name=$(echo "$resource_name" | tr '_' '-')
+    echo "* [${resource_name}](#${anchor_name})" >> "$output_file"
+done < urls.txt
+echo "" >> "$output_file"
 
-    echo "### $title" >> snowflake_docs.md
-    curl -s "$url" >> snowflake_docs.md
-    echo "" >> snowflake_docs.md
-    echo "" >> snowflake_docs.md
-done
+# Process each URL
+while IFS= read -r url; do
+  content=$(curl -s "$url")
 
-echo "## Resources" >> snowflake_docs.md
-echo "" >> snowflake_docs.md
+  # Extract resource name for heading
+  filename=$(basename "$url" .md)
+  resource_name="snowflake_${filename}"
 
-# Process resource files
-grep 'resources' urls.txt | while read -r url; do
-    # Extract filename, remove extension, and format as a title
-    filename=$(basename "$url")
-    title=$(echo "$filename" | sed 's/\.md$//' | sed 's/_/ /g' | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) substr($i,2)} 1')
+  # Add resource heading
+  echo "" >> "$output_file"
+  echo "## ${resource_name}" >> "$output_file"
 
-    echo "### $title" >> snowflake_docs.md
-    curl -s "$url" >> snowflake_docs.md
-    echo "" >> snowflake_docs.md
-    echo "" >> snowflake_docs.md
-done
+  # Generate TOC for the current resource
+  echo "## Table of Contents" >> "$output_file"
+  printf "%s" "$content" | grep '^## ' | sed 's/^## //' | while IFS= read -r heading; do
+    # Create a markdown-friendly anchor link
+    anchor=$(echo "$heading" | tr '[:upper:]' '[:lower:]' | tr -d '[:punct:]' | tr ' ' '-')
+    echo "* [${heading}](#${anchor})" >> "$output_file"
+  done
+  echo "" >> "$output_file"
+
+  # Append the rest of the content, skipping the main title
+  printf "%s" "$content" | sed -n '/^# /,$p' | sed '1d' >> "$output_file"
+  echo "" >> "$output_file"
+done < urls.txt
+
+echo "Documentation generated in ${output_file}"
