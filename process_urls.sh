@@ -1,11 +1,27 @@
 #!/bin/bash
 
+# Configuration with defaults
+OWNER=${PROVIDER_OWNER:-snowflakedb}
+REPO=${PROVIDER_REPO:-terraform-provider-snowflake}
+BRANCH=${PROVIDER_BRANCH:-main}
+PROVIDER=${PROVIDER_NAME:-snowflake}
+
+# URL for changelog
+CHANGELOG_URL="https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}/CHANGELOG.md"
+
 # Get the version from CHANGELOG.md
-version=$(curl -s "https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/CHANGELOG.md" | grep -m 1 '## \[' | awk -F'[][]' '{print $2}')
-output_file="snowflake_${version}.md"
+version=$(curl -s "$CHANGELOG_URL" | grep -m 1 '## \[' | awk -F'[][]' '{print $2}')
+
+# Fallback version if not found
+if [ -z "$version" ]; then
+    version="latest"
+fi
+
+output_file="${PROVIDER}_${version}.md"
 
 # Start with the main title
-echo "# Snowflake Terraform Provider Documentation v${version}" > "$output_file"
+# Note: ${PROVIDER^} capitalizes the first letter (Bash 4.0+)
+echo "# ${PROVIDER^} Terraform Provider Documentation v${version}" > "$output_file"
 echo "" >> "$output_file"
 echo "## All Resources" >> "$output_file"
 echo "## Table of Contents" >> "$output_file"
@@ -13,7 +29,7 @@ echo "## Table of Contents" >> "$output_file"
 # Create a global TOC
 while IFS= read -r url; do
     filename=$(basename "$url" .md)
-    resource_name="snowflake_${filename}"
+    resource_name="${PROVIDER}_${filename}"
     anchor_name=$(echo "$resource_name" | tr '_' '-')
     echo "* [${resource_name}](#${anchor_name})" >> "$output_file"
 done < urls.txt
@@ -25,7 +41,7 @@ while IFS= read -r url; do
 
   # Extract resource name for heading
   filename=$(basename "$url" .md)
-  resource_name="snowflake_${filename}"
+  resource_name="${PROVIDER}_${filename}"
 
   # Add resource heading
   echo "" >> "$output_file"

@@ -1,6 +1,6 @@
-# Snowflake Terraform Provider Documentation Builder
+# Terraform Provider Documentation Builder
 
-This utility builds a single-file Markdown documentation for the Snowflake Terraform Provider. It fetches the documentation from the official `snowflakedb/terraform-provider-snowflake` GitHub repository and consolidates it into one file. This is useful for providing a comprehensive, searchable reference for local use.
+This utility builds a single-file Markdown documentation for a specified Terraform Provider GitHub repository. It fetches the documentation from the given repository and consolidates it into one file. This is useful for providing a comprehensive, searchable reference for local use.
 
 ## Prerequisites
 
@@ -8,40 +8,37 @@ This tool relies on a few common command-line utilities that are typically avail
 
 *   `curl`: Used to fetch data from URLs.
 *   `grep`, `awk`, `sed`, `basename`: Standard text-processing utilities.
-*   `python`: Used to run the script that generates the list of documentation URLs. No external libraries are needed.
+*   `python`: Used to run the main script. No external libraries are needed.
 
 ## Usage
 
-Follow these steps to generate the documentation from scratch.
-
-### Step 1: Fetch the Repository File Structure
-
-The first step is to get the file structure of the Snowflake Terraform Provider's documentation directory. This is done by querying the GitHub API and saving the output to a file named `github_tree.json`.
-
-Run the following command in your terminal:
+To generate the documentation, run the `scrape.py` script with the GitHub repository URL of the Terraform provider.
 
 ```sh
-curl -s "https://api.github.com/repos/snowflakedb/terraform-provider-snowflake/git/trees/main?recursive=1" -o github_tree.json
+python scrape.py <repo_url>
 ```
 
-This will create the `github_tree.json` file in your current directory.
+### Examples
 
-### Step 2: Generate the List of Documentation URLs
-
-Next, run the provided Python script to process `github_tree.json`. This script extracts the paths to the relevant documentation files, constructs the full URLs, and saves them into a file named `urls.txt`.
-
+**Snowflake Provider:**
 ```sh
-python scrape.py
+python scrape.py https://github.com/snowflakedb/terraform-provider-snowflake
 ```
+This will generate a file like `snowflake_2.5.0.md` (version depends on the latest tag in CHANGELOG.md).
 
-This will create the `urls.txt` file.
-
-### Step 3: Generate the Documentation File
-
-Finally, run the shell script to fetch the content of each URL and build the final documentation file. The script will automatically determine the latest version of the provider and include it in the output filename (e.g., `snowflake_2.5.0.md`).
-
+**dbt Cloud Provider:**
 ```sh
-bash process_urls.sh
+python scrape.py https://github.com/dbt-labs/terraform-provider-dbtcloud
 ```
+This will generate a file like `dbtcloud_0.2.0.md`.
 
-Upon completion, you will find a new markdown file in your directory with the consolidated documentation. The script will print the name of the generated file, for example: `Documentation generated in snowflake_2.5.0.md`.
+## How it works
+
+1.  **Repo Analysis**: The script parses the provided URL to identify the owner and repository name, and determines the default branch (e.g., `main` or `master`).
+2.  **Fetch File Structure**: It uses the GitHub API to fetch the file tree of the repository and saves it to `github_tree.json`.
+3.  **Generate URL List**: It parses the tree to find markdown files in `docs/resources/` and `docs/data-sources/`, constructing raw content URLs, and saves them to `urls.txt`.
+4.  **Build Documentation**: It runs `process_urls.sh`, which:
+    *   Determines the version from `CHANGELOG.md`.
+    *   Downloads each markdown file.
+    *   Adds a table of contents.
+    *   Concatenates everything into a single Markdown file.
