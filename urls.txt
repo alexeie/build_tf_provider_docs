@@ -1,6 +1,7 @@
 https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/docs/data-sources/account_roles.md
 https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/docs/data-sources/accounts.md
 https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/docs/data-sources/alerts.md
+https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/docs/data-sources/authentication_policies.md
 https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/docs/data-sources/compute_pools.md
 https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/docs/data-sources/connections.md
 https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/docs/data-sources/cortex_search_services.md
@@ -22,6 +23,7 @@ https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/
 https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/docs/data-sources/masking_policies.md
 https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/docs/data-sources/materialized_views.md
 https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/docs/data-sources/network_policies.md
+https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/docs/data-sources/notebooks.md
 https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/docs/data-sources/parameters.md
 https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/docs/data-sources/pipes.md
 https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/docs/data-sources/procedures.md
@@ -30,6 +32,7 @@ https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/
 https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/docs/data-sources/schemas.md
 https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/docs/data-sources/secrets.md
 https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/docs/data-sources/security_integrations.md
+https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/docs/data-sources/semantic_views.md
 https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/docs/data-sources/sequences.md
 https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/docs/data-sources/services.md
 https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/docs/data-sources/shares.md
@@ -97,6 +100,7 @@ https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/
 https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/docs/resources/network_policy.md
 https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/docs/resources/network_policy_attachment.md
 https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/docs/resources/network_rule.md
+https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/docs/resources/notebook.md
 https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/docs/resources/notification_integration.md
 https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/docs/resources/oauth_integration_for_custom_clients.md
 https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/docs/resources/oauth_integration_for_partner_applications.md
@@ -120,6 +124,7 @@ https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/
 https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/docs/resources/secret_with_basic_authentication.md
 https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/docs/resources/secret_with_client_credentials.md
 https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/docs/resources/secret_with_generic_string.md
+https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/docs/resources/semantic_view.md
 https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/docs/resources/sequence.md
 https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/docs/resources/service.md
 https://raw.githubusercontent.com/snowflakedb/terraform-provider-snowflake/main/docs/resources/service_user.md
