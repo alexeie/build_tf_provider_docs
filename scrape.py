@@ -4,6 +4,8 @@ import subprocess
 import re
 import os
 
+TEMP_DIR = 'temp'
+
 def get_repo_info(repo_url):
     """Parses the repository URL to extract owner and repo name."""
     # Matches https://github.com/owner/repo or github.com/owner/repo
@@ -19,6 +21,11 @@ def get_default_branch(owner, repo):
     try:
         # Using curl to fetch repo info
         result = subprocess.check_output(['curl', '-s', api_url], text=True)
+
+        # Save raw JSON response
+        with open(os.path.join(TEMP_DIR, 'github_branch.json'), 'w') as f:
+            f.write(result)
+
         data = json.loads(result)
         return data.get('default_branch', 'main')
     except Exception as e:
@@ -29,23 +36,31 @@ def fetch_tree(owner, repo, branch):
     """Fetches the git tree structure recursively."""
     url = f"https://api.github.com/repos/{owner}/{repo}/git/trees/{branch}?recursive=1"
     print(f"Fetching file structure from {url}...")
+    output_file = os.path.join(TEMP_DIR, 'github_tree.json')
     try:
-        subprocess.check_call(['curl', '-s', url, '-o', 'github_tree.json'])
+        subprocess.check_call(['curl', '-s', url, '-o', output_file])
     except subprocess.CalledProcessError as e:
         print(f"Error fetching tree: {e}")
         sys.exit(1)
 
 def create_url_list(owner, repo, branch):
     """Parses github_tree.json and creates urls.txt with raw file URLs."""
+    input_file = os.path.join(TEMP_DIR, 'github_tree.json')
     try:
-        with open('github_tree.json', 'r') as f:
+        with open(input_file, 'r') as f:
             data = json.load(f)
     except FileNotFoundError:
-        print("Error: github_tree.json not found.")
+        print(f"Error: {input_file} not found.")
         sys.exit(1)
     except json.JSONDecodeError:
-        print("Error: github_tree.json is not valid JSON. Ensure the repo exists and is public.")
+        print(f"Error: {input_file} is not valid JSON. Ensure the repo exists and is public.")
         sys.exit(1)
+
+    # Extract SHA
+    tree_sha = data.get('sha')
+    if tree_sha:
+        with open(os.path.join(TEMP_DIR, 'tree_sha.txt'), 'w') as f:
+            f.write(tree_sha)
 
     urls = []
     base_url = f"https://raw.githubusercontent.com/{owner}/{repo}/{branch}"
@@ -62,16 +77,20 @@ def create_url_list(owner, repo, branch):
         if (path.startswith('docs/resources/') or path.startswith('docs/data-sources/')) and path.endswith('.md'):
             urls.append(f"{base_url}/{path}")
 
-    with open('urls.txt', 'w') as f:
+    output_file = os.path.join(TEMP_DIR, 'urls.txt')
+    with open(output_file, 'w') as f:
         for url in sorted(urls):
             f.write(f"{url}\n")
 
-    print(f"Generated urls.txt with {len(urls)} URLs.")
+    print(f"Generated {output_file} with {len(urls)} URLs.")
 
 def main():
     if len(sys.argv) < 2:
         print("Usage: python scrape.py <repo_url>")
         sys.exit(1)
+
+    # Create temp directory
+    os.makedirs(TEMP_DIR, exist_ok=True)
 
     repo_url = sys.argv[1]
 
@@ -107,6 +126,7 @@ def main():
     env['PROVIDER_BRANCH'] = branch
     env['PROVIDER_NAME'] = provider
     env["PROVIDER_CAP"] = provider.capitalize()
+    env['URLS_FILE'] = os.path.join(TEMP_DIR, 'urls.txt')
 
     try:
         subprocess.check_call(['bash', 'process_urls.sh'], env=env)

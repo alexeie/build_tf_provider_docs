@@ -5,12 +5,13 @@ OWNER=${PROVIDER_OWNER:-snowflakedb}
 REPO=${PROVIDER_REPO:-terraform-provider-snowflake}
 BRANCH=${PROVIDER_BRANCH:-main}
 PROVIDER=${PROVIDER_CAP:-snowflake}
+URLS_FILE=${URLS_FILE:-urls.txt}
 
 # URL for changelog
 CHANGELOG_URL="https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}/CHANGELOG.md"
 
 # Get the version from CHANGELOG.md
-version=$(curl -s "$CHANGELOG_URL" | grep -m 1 '## \[' | awk -F'[][]' '{print $2}')
+version=$(curl -s "$CHANGELOG_URL" | grep -m 1 '## \[' | awk -F'[][]' '{print $2}' | tr -d '\r')
 
 # Fallback version if not found
 if [ -z "$version" ]; then
@@ -31,7 +32,7 @@ while IFS= read -r url; do
     resource_name="${PROVIDER}_${filename}"
     anchor_name=$(echo "$resource_name" | tr '_' '-')
     echo "* [${resource_name}](#${anchor_name})" >> "$output_file"
-done < urls.txt
+done < "$URLS_FILE"
 echo "" >> "$output_file"
 
 # Process each URL
@@ -58,6 +59,6 @@ while IFS= read -r url; do
   # Append the rest of the content, skipping the main title
   printf "%s" "$content" | sed -n '/^# /,$p' | sed '1d' >> "$output_file"
   echo "" >> "$output_file"
-done < urls.txt
+done < "$URLS_FILE"
 
 echo "Documentation generated in ${output_file}"
