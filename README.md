@@ -14,9 +14,33 @@ This tool relies on a few common command-line utilities that are typically avail
 
 To generate the documentation, run the `scrape.py` script with the GitHub repository URL of the Terraform provider.
 
-```sh
-python scrape.py <repo_url>
-```
+### Using Pip (Standard Python)
+
+1.  **Set up a virtual environment (Optional but recommended):**
+    ```sh
+    python3 -m venv venv
+    source venv/bin/activate  # On macOS/Linux
+    # venv\Scripts\activate   # On Windows
+    ```
+
+2.  **Install dependencies:**
+    ```sh
+    pip install -r requirements.txt
+    ```
+
+3.  **Run the script:**
+    ```sh
+    python scrape.py <repo_url>
+    ```
+
+### Using uv
+
+[uv](https://docs.astral.sh/uv/) is a fast Python package installer and runner.
+
+1.  **Run directly:**
+    ```sh
+    uv run scrape.py <repo_url>
+    ```
 
 ### Examples
 
