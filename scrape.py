@@ -106,6 +106,7 @@ def main():
     env['PROVIDER_REPO'] = repo
     env['PROVIDER_BRANCH'] = branch
     env['PROVIDER_NAME'] = provider
+    env["PROVIDER_CAP"] = provider.capitalize()
 
     try:
         subprocess.check_call(['bash', 'process_urls.sh'], env=env)

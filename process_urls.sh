@@ -4,7 +4,7 @@
 OWNER=${PROVIDER_OWNER:-snowflakedb}
 REPO=${PROVIDER_REPO:-terraform-provider-snowflake}
 BRANCH=${PROVIDER_BRANCH:-main}
-PROVIDER=${PROVIDER_NAME:-snowflake}
+PROVIDER=${PROVIDER_CAP:-snowflake}
 
 # URL for changelog
 CHANGELOG_URL="https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}/CHANGELOG.md"
@@ -20,8 +20,7 @@ fi
 output_file="${PROVIDER}_${version}.md"
 
 # Start with the main title
-# Note: ${PROVIDER^} capitalizes the first letter (Bash 4.0+)
-echo "# ${PROVIDER^} Terraform Provider Documentation v${version}" > "$output_file"
+echo "# ${PROVIDER} Terraform Provider Documentation v${version}" > "$output_file"
 echo "" >> "$output_file"
 echo "## All Resources" >> "$output_file"
 echo "## Table of Contents" >> "$output_file"
