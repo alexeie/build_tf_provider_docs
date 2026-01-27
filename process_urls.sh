@@ -24,7 +24,6 @@ output_file="${PROVIDER}_${version}.md"
 echo "# ${PROVIDER} Terraform Provider Documentation v${version}" > "$output_file"
 echo "" >> "$output_file"
 echo "## All Resources" >> "$output_file"
-echo "## Table of Contents" >> "$output_file"
 
 # Create a global TOC
 while IFS= read -r url; do
@@ -48,7 +47,7 @@ while IFS= read -r url; do
   echo "## ${resource_name}" >> "$output_file"
 
   # Generate TOC for the current resource
-  echo "## Table of Contents" >> "$output_file"
+  echo "### Table of Contents" >> "$output_file"
   printf "%s" "$content" | grep '^## ' | sed 's/^## //' | while IFS= read -r heading; do
     # Create a markdown-friendly anchor link
     anchor=$(echo "$heading" | tr '[:upper:]' '[:lower:]' | tr -d '[:punct:]' | tr ' ' '-')
