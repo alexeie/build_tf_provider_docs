@@ -6,6 +6,13 @@ import os
 
 TEMP_DIR = 'temp'
 
+def get_curl_headers():
+    """Returns curl auth header arguments if GITHUB_TOKEN is set."""
+    token = os.environ.get('GITHUB_TOKEN')
+    if token:
+        return ['-H', f'Authorization: token {token}']
+    return []
+
 def get_repo_info(repo_url):
     """Parses the repository URL to extract owner and repo name."""
     # Matches https://github.com/owner/repo or github.com/owner/repo
@@ -20,7 +27,7 @@ def get_default_branch(owner, repo):
     api_url = f"https://api.github.com/repos/{owner}/{repo}"
     try:
         # Using curl to fetch repo info
-        result = subprocess.check_output(['curl', '-s', api_url], text=True)
+        result = subprocess.check_output(['curl', '-s'] + get_curl_headers() + [api_url], text=True)
 
         # Save raw JSON response
         with open(os.path.join(TEMP_DIR, 'github_branch.json'), 'w') as f:
@@ -38,7 +45,7 @@ def fetch_tree(owner, repo, branch):
     print(f"Fetching file structure from {url}...")
     output_file = os.path.join(TEMP_DIR, 'github_tree.json')
     try:
-        subprocess.check_call(['curl', '-s', url, '-o', output_file])
+        subprocess.check_call(['curl', '-s'] + get_curl_headers() + [url, '-o', output_file])
     except subprocess.CalledProcessError as e:
         print(f"Error fetching tree: {e}")
         sys.exit(1)
@@ -55,12 +62,6 @@ def create_url_list(owner, repo, branch):
     except json.JSONDecodeError:
         print(f"Error: {input_file} is not valid JSON. Ensure the repo exists and is public.")
         sys.exit(1)
-
-    # Extract SHA
-    tree_sha = data.get('sha')
-    if tree_sha:
-        with open(os.path.join(TEMP_DIR, 'tree_sha.txt'), 'w') as f:
-            f.write(tree_sha)
 
     urls = []
     base_url = f"https://raw.githubusercontent.com/{owner}/{repo}/{branch}"
