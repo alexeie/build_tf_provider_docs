@@ -35,8 +35,13 @@ echo "## All Resources" >> "$output_file"
 while IFS= read -r url; do
     filename=$(basename "$url" .md)
     resource_name="${PROVIDER}_${filename}"
-    anchor_name=$(echo "$resource_name" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9 _-]//g' | tr ' ' '-')
-    echo "* [${resource_name}](#${anchor_name})" >> "$output_file"
+    if echo "$url" | grep -q '/docs/data-sources/'; then
+        resource_label="${resource_name} (data source)"
+    else
+        resource_label="${resource_name} (resource)"
+    fi
+    anchor_name=$(echo "$resource_label" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9 _-]//g' | tr ' ' '-')
+    echo "* [${resource_label}](#${anchor_name})" >> "$output_file"
 done < "$URLS_FILE"
 echo "" >> "$output_file"
 
@@ -60,10 +65,15 @@ while IFS= read -r url; do
 
   content=$(cat "$filepath")
   resource_name="${PROVIDER}_${filename%.md}"
+  if echo "$url" | grep -q '/docs/data-sources/'; then
+      resource_label="${resource_name} (data source)"
+  else
+      resource_label="${resource_name} (resource)"
+  fi
 
   # Add resource heading
   echo "" >> "$output_file"
-  echo "## ${resource_name}" >> "$output_file"
+  echo "## ${resource_label}" >> "$output_file"
 
   # Generate TOC for the current resource
   echo "### Table of Contents" >> "$output_file"
