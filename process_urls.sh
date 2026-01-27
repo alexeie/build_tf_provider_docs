@@ -35,7 +35,7 @@ echo "## All Resources" >> "$output_file"
 while IFS= read -r url; do
     filename=$(basename "$url" .md)
     resource_name="${PROVIDER}_${filename}"
-    anchor_name=$(echo "$resource_name" | tr '_' '-')
+    anchor_name=$(echo "$resource_name" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9 _-]//g' | tr ' ' '-')
     echo "* [${resource_name}](#${anchor_name})" >> "$output_file"
 done < "$URLS_FILE"
 echo "" >> "$output_file"
