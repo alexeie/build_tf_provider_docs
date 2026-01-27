@@ -36,7 +36,11 @@ echo "" >> "$output_file"
 
 # Process each URL
 while IFS= read -r url; do
-  content=$(curl -s "$url")
+  content=$(curl -sf "$url")
+  if [ $? -ne 0 ]; then
+    echo "Warning: Failed to fetch ${url}" >&2
+    continue
+  fi
 
   # Extract resource name for heading
   filename=$(basename "$url" .md)
